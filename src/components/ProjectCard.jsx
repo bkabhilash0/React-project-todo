@@ -2,12 +2,9 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Project from "../models/Project";
 
-const ProjectCard = ({project}) => {
+const ProjectCard = ({ project }) => {
   return (
-    <Link
-      className="w-full bg-white rounded-lg shadow py-2 px-3 flex flex-col gap-y-4 md:py-3 hover:-translate-y-2 transition-all cursor-pointer lg:py-5 lg:px-6"
-      to={`/projects/${project.id}`}
-    >
+    <div className="w-full bg-white rounded-lg shadow py-2 px-3 flex flex-col gap-y-4 md:py-3 hover:-translate-y-2 transition-all cursor-pointer lg:py-5 lg:px-6">
       <div className="flex gap-x-4 md:gap-x-6 lg:gap-x-8 items-start">
         <div className="min-w-14 md:min-w-20 lg:min-w-24 aspect-square bg-neutral-200 rounded-full"></div>
         <div className="flex flex-col">
@@ -15,7 +12,8 @@ const ProjectCard = ({project}) => {
             {project.title}
           </h2>
           <p className="text-[12px] md:text-sm lg:text-base text-justify text-neutral-400">
-            {project.description}
+            {project.description ??
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed quia adipisci hic enim sapiente, nihil corporis quas sunt..."}
           </p>
         </div>
       </div>
@@ -25,7 +23,7 @@ const ProjectCard = ({project}) => {
       >
         View
       </Link>
-    </Link>
+    </div>
   );
 };
 

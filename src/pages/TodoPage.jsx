@@ -1,8 +1,28 @@
+import { useParams } from "react-router-dom";
 import AddTodoBtn from "../components/AddTodoBtn";
 import EditableHeader from "../components/EditableHeader";
 import TodoCard from "../components/TodoCard";
+import { useQuery } from "@tanstack/react-query";
 
 const TodoPage = () => {
+  const params = useParams()
+  console.log(params.id)
+
+  const { data, isSuccess, isLoading, isError } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/project/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Basic YmthYmhpbGFzaDBAZ21haWwuY29tOnBhc3N3b3Jk",
+        },
+      });
+      const data = res.json();
+      return data;
+    },
+  });
+
   return (
     <>
       <div>
