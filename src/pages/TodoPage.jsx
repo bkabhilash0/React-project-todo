@@ -1,27 +1,41 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import AddTodoBtn from "../components/AddTodoBtn";
 import EditableHeader from "../components/EditableHeader";
 import TodoCard from "../components/TodoCard";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../store/store";
 
 const TodoPage = () => {
-  const params = useParams()
-  console.log(params.id)
+  const params = useParams();
+
+  const user = useAuth((state) => state.user);
 
   const { data, isSuccess, isLoading, isError } = useQuery({
     queryKey: ["projects"],
+    enabled: !!user,
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/project/`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/todo/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Basic YmthYmhpbGFzaDBAZ21haWwuY29tOnBhc3N3b3Jk",
+          Authorization: `Basic ${user}`,
         },
       });
       const data = res.json();
       return data;
     },
   });
+
+  if (!user) {
+    return (
+      <div className="">
+        <p>You are not Logged In! Please Login in to Continue</p>
+        <Link to="/auth/login" className="text-blue-500">
+          Login
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>

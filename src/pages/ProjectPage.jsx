@@ -3,22 +3,39 @@ import AddProjectBtn from "../components/AddProjectBtn";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "../components/Loader";
 import Project from "../models/Project";
+import { useAuth } from "../store/store";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 const ProjectPage = () => {
+  const user = useAuth((state) => state.user);
+
   const { data, isSuccess, isLoading, isError } = useQuery({
     queryKey: ["projects"],
+    enabled: !!user,
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/project/`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/project/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Basic YmthYmhpbGFzaDBAZ21haWwuY29tOnBhc3N3b3Jk",
+          Authorization: `Basic ${user}`,
         },
       });
-      const data = res.json();
+      const data = res.data;
       return data;
     },
   });
+
+  if (!user) {
+    return (
+      <div className="">
+        <p>You are not Logged In! Please Login in to Continue</p>
+        <Link to="/auth/login" className="text-blue-500">
+          Login
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -31,14 +48,18 @@ const ProjectPage = () => {
       <hr className="my-3" />
       {isSuccess && !isLoading && !isError && (
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 sm:gap-3">
-          {data.map((project) => (
-            <ProjectCard
-              key={project.title}
-              project={
-                new Project(project.id, project.title, project.description)
-              }
-            />
-          ))}
+          {data.length == 0 ? (
+            <p>No Projects Available</p>
+          ) : (
+            data.map((project) => (
+              <ProjectCard
+                key={project.title}
+                project={
+                  new Project(project.id, project.title, project.description)
+                }
+              />
+            ))
+          )}
         </div>
       )}
       {isLoading && <Loader />}

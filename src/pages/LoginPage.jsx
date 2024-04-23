@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../store/store";
 import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -21,12 +22,27 @@ const LoginPage = () => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setCookie("user", "jwttoken",{path: "/"});
-    setUser("jwttoken");
-    // window.location.reload();
-    // Add your login logic here
+    const token = window.btoa(`${email}:${password}`);
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/user/login`,
+        {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
+      if (res.status === 200) {
+        window.alert("Login successful");
+        setCookie("user", token, { path: "/" });
+        setUser(token);
+        window.location.reload();
+      }
+    } catch (error) {
+      window.alert("Login failed");
+    }
   };
 
   return (
