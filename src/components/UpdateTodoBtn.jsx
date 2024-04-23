@@ -1,8 +1,9 @@
 import { useState } from "react";
 import AddTodoModal from "./AddTodoModal";
 import Todo from "../models/Todo";
+import PropTypes from "prop-types";
 
-const UpdateTodoBtn = () => {
+const UpdateTodoBtn = ({data}) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleModalToggle = () => {
@@ -23,11 +24,16 @@ const UpdateTodoBtn = () => {
             className="bg-black/50 fixed w-full h-full top-0 left-0"
             onClick={handleModalToggle}
           ></div>
-          <AddTodoModal edit data={new Todo("sample","Sample Description")}/>
+          <AddTodoModal edit data={data}/>
         </>
       )}
     </>
   );
 };
+
+UpdateTodoBtn.propTypes = {
+  data: PropTypes.instanceOf(Todo),
+};
+
 
 export default UpdateTodoBtn;
